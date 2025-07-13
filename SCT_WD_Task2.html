@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Web Calculator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0f1116;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #fff;
+    }
+
+    h1 {
+      color: #00bcd4;
+      margin-bottom: 20px;
+      font-size: 2rem;
+      letter-spacing: 1px;
+    }
+
+    .calculator {
+      background: #1c1f26;
+      padding: 20px;
+      border-radius: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      width: 340px;
+    }
+
+    .display {
+      background: #293146;
+      color: #00e5ff;
+      font-size: 2rem;
+      text-align: right;
+      padding: 20px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      height: 60px;
+      overflow-x: auto;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    button {
+      padding: 20px;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: 0.2s;
+      background: #2a2f3a;
+      color: white;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background-color: #3a3f4f;
+    }
+
+    .operator { color: white; }
+
+    .red    { background: #e53935; }
+    .blue   { background: #1e88e5; }
+    .yellow { background: #fbc02d; color: #111; }
+    .green  { background: #43a047; }
+    .dark   { background: #0d131e; }
+
+    .equal {
+      background: #39404f;
+    }
+
+    .dark:hover {
+      background: #222;
+    }
+  </style>
+</head>
+<body>
+  <h1>Web Calculator</h1>
+  <div class="calculator">
+    <div id="display" class="display">0</div>
+    <div class="buttons">
+      <button data-value="%">%</button>
+      <button data-value="sqrt">√</button>
+      <button id="ce">CE</button>
+      <button id="clear" class="dark">C</button>
+
+      <button data-value="7">7</button>
+      <button data-value="8">8</button>
+      <button data-value="9">9</button>
+      <button data-value="-" class="operator red">−</button>
+
+      <button data-value="4">4</button>
+      <button data-value="5">5</button>
+      <button data-value="6">6</button>
+      <button data-value="/" class="operator blue">÷</button>
+
+      <button data-value="1">1</button>
+      <button data-value="2">2</button>
+      <button data-value="3">3</button>
+      <button data-value="*" class="operator yellow">×</button>
+
+      <button data-value=".">.</button>
+      <button data-value="0">0</button>
+      <button id="equal" class="equal">=</button>
+      <button data-value="+" class="operator green">+</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+    const buttons = document.querySelectorAll('.buttons button');
+    const clearBtn = document.getElementById('clear');
+    const equalBtn = document.getElementById('equal');
+    const ceBtn = document.getElementById('ce');
+
+    let current = '';
+
+    function updateDisplay() {
+      display.textContent = current || '0';
+    }
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const value = btn.dataset.value;
+        if (!value) return;
+
+        if (value === 'sqrt') {
+          try {
+            current = Math.sqrt(eval(current)).toString();
+            updateDisplay();
+          } catch {
+            current = 'Error';
+            updateDisplay();
+            current = '';
+          }
+        } else {
+          current += value;
+          updateDisplay();
+        }
+      });
+    });
+
+    equalBtn.addEventListener('click', () => {
+      try {
+        current = eval(current).toString();
+        updateDisplay();
+      } catch {
+        current = 'Error';
+        updateDisplay();
+        current = '';
+      }
+    });
+
+    clearBtn.addEventListener('click', () => {
+      current = '';
+      updateDisplay();
+    });
+
+    ceBtn.addEventListener('click', () => {
+      current = current.slice(0, -1);
+      updateDisplay();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const key = e.key;
+      if ('0123456789.+-*/%'.includes(key)) {
+        current += key;
+        updateDisplay();
+      } else if (key === 'Enter') {
+        try {
+          current = eval(current).toString();
+        } catch {
+          current = 'Error';
+        }
+        updateDisplay();
+      } else if (key === 'Backspace') {
+        current = current.slice(0, -1);
+        updateDisplay();
+      } else if (key === 'Escape') {
+        current = '';
+        updateDisplay();
+      }
+    });
+  </script>
+</body>
+</html>
